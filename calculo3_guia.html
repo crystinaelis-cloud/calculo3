@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cálculo III — Guia de Estudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #181c27;
+    --bg3: #1e2330;
+    --bg4: #232840;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --text2: #9ba3b8;
+    --text3: #636b82;
+    --blue: #5b8dee;
+    --blue-dim: rgba(91,141,238,0.12);
+    --blue-glow: rgba(91,141,238,0.25);
+    --teal: #34d4a0;
+    --teal-dim: rgba(52,212,160,0.10);
+    --amber: #f5a623;
+    --amber-dim: rgba(245,166,35,0.10);
+    --coral: #ff6b6b;
+    --coral-dim: rgba(255,107,107,0.10);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.10);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.10);
+    --radius: 10px;
+    --radius-lg: 16px;
+    --font: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Lora', serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    padding: 0 2rem; height: 56px;
+  }
+  .nav-brand {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin-right: 2rem; white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-brand span { color: var(--blue); }
+  .nav-links { display: flex; gap: 2px; }
+  .nav-link {
+    padding: 6px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; color: var(--text2);
+    cursor: pointer; border: none; background: none;
+    transition: color .15s, background .15s;
+  }
+  .nav-link:hover { color: var(--text); background: var(--bg3); }
+  .nav-link.active { color: var(--blue); background: var(--blue-dim); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 120px 2rem 80px;
+    max-width: 780px; margin: 0 auto;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue-dim); border: 1px solid var(--blue-glow);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 12px; font-weight: 500; color: var(--blue);
+    margin-bottom: 1.5rem; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600; color: var(--text);
+    line-height: 1.2; margin-bottom: 1rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--blue); }
+  .hero-sub {
+    font-size: 16px; color: var(--text2);
+    max-width: 540px; margin: 0 auto 2.5rem;
+  }
+  .hero-topics {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+  }
+  .topic-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+    font-size: 13px; font-weight: 500; color: var(--text2);
+    cursor: pointer; transition: all .15s; text-decoration: none;
+  }
+  .topic-pill:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+  .topic-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 2rem 6rem; }
+  .section { margin-bottom: 5rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 2rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 22px; font-weight: 600; color: var(--text);
+  }
+  .section-header p { font-size: 13px; color: var(--text3); margin-top: 2px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .accent { color: var(--blue); }
+  .card p { font-size: 14px; color: var(--text2); }
+  .card-blue  { border-left: 3px solid var(--blue);   border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .card-teal  { border-left: 3px solid var(--teal);   border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .card-amber { border-left: 3px solid var(--amber);  border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .card-coral { border-left: 3px solid var(--coral);  border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .card-purple{ border-left: 3px solid var(--purple); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+
+  /* ── FORMULA ── */
+  .formula {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.25rem;
+    font-family: var(--mono); font-size: 13px; color: var(--teal);
+    margin: 0.75rem 0; line-height: 1.8; overflow-x: auto;
+  }
+  .formula .kw  { color: var(--blue); }
+  .formula .val { color: var(--amber); }
+  .formula .cmt { color: var(--text3); font-style: italic; }
+
+  /* ── CALLOUT BOXES ── */
+  .box-ok {
+    background: var(--teal-dim); border: 1px solid rgba(52,212,160,.25);
+    border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.75rem 0;
+  }
+  .box-ok p { font-size: 13px; color: var(--teal); }
+  .box-warn {
+    background: var(--amber-dim); border: 1px solid rgba(245,166,35,.25);
+    border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.75rem 0;
+  }
+  .box-warn p { font-size: 13px; color: var(--amber); }
+  .box-danger {
+    background: var(--coral-dim); border: 1px solid rgba(255,107,107,.25);
+    border-radius: var(--radius); padding: 0.8rem 1rem; margin: 0.75rem 0;
+  }
+  .box-danger p { font-size: 13px; color: var(--coral); }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 1rem; }
+  .step { display: flex; gap: 14px; align-items: flex-start; }
+  .step-num {
+    min-width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-num.blue   { background: var(--blue-dim);   color: var(--blue); border: 1px solid rgba(91,141,238,.3); }
+  .step-num.teal   { background: var(--teal-dim);   color: var(--teal); border: 1px solid rgba(52,212,160,.3); }
+  .step-num.amber  { background: var(--amber-dim);  color: var(--amber); border: 1px solid rgba(245,166,35,.3);}
+  .step-num.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,.3);}
+  .step-body h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+  .step-body p  { font-size: 13px; color: var(--text2); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 0.75rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--bg3); padding: 9px 14px; text-align: left;
+    font-weight: 600; color: var(--text2); border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 14px; color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .tag-green  { background: var(--green-dim);  color: var(--green); }
+  .tag-coral  { background: var(--coral-dim);  color: var(--coral); }
+  .tag-amber  { background: var(--amber-dim);  color: var(--amber); }
+  .tag-purple { background: var(--purple-dim); color: var(--purple); }
+
+  /* ── GRID ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .grid2,.grid3 { grid-template-columns: 1fr; } }
+  .mini-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem;
+  }
+  .mini-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+  .mini-card p  { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* ── EXAMPLE BLOCK ── */
+  .example {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.5rem; margin: 1rem 0;
+  }
+  .example-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text3); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .example-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── INTERACTIVE STEPPER ── */
+  .stepper {}
+  .stepper-nav {
+    display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+  .s-btn {
+    padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); font-size: 13px;
+    cursor: pointer; font-family: var(--font); transition: all .15s;
+  }
+  .s-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+  .s-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+  .s-panel { display: none; }
+  .s-panel.active { display: block; }
+
+  /* ── QUIZ ── */
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 1rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px; border-radius: var(--radius);
+    border: 1px solid var(--border2); background: var(--bg3);
+    cursor: pointer; font-size: 14px; color: var(--text2);
+    transition: all .15s; text-align: left; font-family: var(--font);
+  }
+  .quiz-opt:hover { border-color: var(--blue); color: var(--text); }
+  .quiz-opt.correct { border-color: var(--teal); background: var(--teal-dim); color: var(--teal); pointer-events: none; }
+  .quiz-opt.wrong   { border-color: var(--coral); background: var(--coral-dim); color: var(--coral); pointer-events: none; }
+  .quiz-opt.disabled { pointer-events: none; opacity: .5; }
+  .quiz-feedback { margin-top: 1rem; font-size: 13px; display: none; }
+  .quiz-next {
+    margin-top: 1rem; padding: 8px 20px; border-radius: var(--radius);
+    border: 1px solid var(--blue); background: var(--blue-dim); color: var(--blue);
+    font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font);
+    display: none; transition: all .15s;
+  }
+  .quiz-next:hover { background: var(--blue); color: #fff; }
+  .quiz-score {
+    font-size: 15px; font-weight: 600; text-align: center; padding: 2rem;
+    display: none;
+  }
+  .quiz-progress {
+    display: flex; gap: 4px; margin-bottom: 1.5rem;
+  }
+  .q-dot {
+    flex: 1; height: 4px; border-radius: 2px; background: var(--bg4);
+    transition: background .3s;
+  }
+  .q-dot.done { background: var(--blue); }
+  .q-dot.correct { background: var(--teal); }
+  .q-dot.wrong { background: var(--coral); }
+
+  /* ── CHART ── */
+  .chart-wrap { position: relative; height: 260px; margin: 1rem 0; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(91,141,238,.25); }
+  .badge-teal   { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(52,212,160,.25); }
+  .badge-amber  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(245,166,35,.25); }
+  .badge-coral  { background: var(--coral-dim);  color: var(--coral);  border: 1px solid rgba(255,107,107,.25); }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 2rem;
+    font-size: 12px; color: var(--text3);
+    border-top: 1px solid var(--border);
+  }
+
+  ul.list { padding-left: 1.2rem; }
+  ul.list li { font-size: 14px; color: var(--text2); margin-bottom: 0.35rem; }
+  ul.list li strong { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 700px) {
+    nav { padding: 0 1rem; }
+    .nav-links .nav-link { padding: 6px 8px; font-size: 12px; }
+    .container { padding: 0 1rem 4rem; }
+    .hero { padding: 100px 1rem 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">∫ <span>Cálculo III</span></div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="scrollTo('#locais')">Extremos locais</button>
+    <button class="nav-link" onclick="scrollTo('#globais')">Extremos globais</button>
+    <button class="nav-link" onclick="scrollTo('#lagrange')">Lagrange</button>
+    <button class="nav-link" onclick="scrollTo('#quiz')">Quiz</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">📐 Guia de estudos</div>
+  <h1>Domine os <em>extremos</em> de funções de duas variáveis</h1>
+  <p class="hero-sub">Teoria completa, passo a passo, exemplos resolvidos e quiz para sua prova de Cálculo III.</p>
+  <div class="hero-topics">
+    <a href="#locais" class="topic-pill"><span class="dot" style="background:var(--blue)"></span>Extremos locais</a>
+    <a href="#globais" class="topic-pill"><span class="dot" style="background:var(--teal)"></span>Extremos globais</a>
+    <a href="#lagrange" class="topic-pill"><span class="dot" style="background:var(--purple)"></span>Multiplicadores de Lagrange</a>
+    <a href="#quiz" class="topic-pill"><span class="dot" style="background:var(--amber)"></span>Quiz interativo</a>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+<!-- ════════════════════════════════════
+     SEÇÃO 1 — EXTREMOS LOCAIS
+════════════════════════════════════ -->
+<section class="section" id="locais">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--blue-dim)">📍</div>
+    <div>
+      <h2>Extremos locais</h2>
+      <p>Máximos e mínimos em vizinhanças — com o Teste da Derivada Segunda</p>
+    </div>
+  </div>
+
+  <!-- Definições -->
+  <div class="grid2">
+    <div class="card card-blue">
+      <div class="card-title">Mínimo local</div>
+      <p>f(x₀,y₀) é mínimo local se existir um disco aberto D centrado em (x₀,y₀) tal que:</p>
+      <div class="formula">f(x₀,y₀) ≤ f(x,y), ∀(x,y) ∈ D</div>
+      <p style="font-size:13px;color:var(--text3)">A superfície forma uma "bacia" ao redor do ponto.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">Máximo local</div>
+      <p>f(x₀,y₀) é máximo local se existir um disco aberto D centrado em (x₀,y₀) tal que:</p>
+      <div class="formula">f(x₀,y₀) ≥ f(x,y), ∀(x,y) ∈ D</div>
+      <p style="font-size:13px;color:var(--text3)">A superfície forma um "morro" ao redor do ponto.</p>
+    </div>
+  </div>
+
+  <div class="box-warn">
+    <p>⚠️ O extremo local é o <strong>valor</strong> f(x₀,y₀), não o ponto (x₀,y₀) nem o ponto do gráfico (x₀,y₀,f(x₀,y₀)).</p>
+  </div>
+
+  <!-- Ponto crítico -->
+  <div class="card card-purple" style="margin-top:1.5rem">
+    <div class="card-title">Ponto crítico <span class="badge badge-purple" style="margin-left:8px">Definição 3</span></div>
+    <p>P = (x₀,y₀) é ponto crítico de f(x,y) se:</p>
+    <div class="formula"><span class="kw">fₓ</span>(x₀,y₀) = 0  <span class="cmt">E</span>  <span class="kw">f_y</span>(x₀,y₀) = 0<br>
+<span class="cmt">        — ou —</span><br>
+<span class="kw">fₓ</span>(x₀,y₀) não existe  <span class="cmt">ou</span>  <span class="kw">f_y</span>(x₀,y₀) não existe</div>
+    <div class="box-ok">
+      <p>✔ <strong>Teorema 1:</strong> todo extremo local ocorre em um ponto crítico. A recíproca <em>não</em> é verdadeira.</p>
+    </div>
+  </div>
+
+  <!-- Ponto de sela -->
+  <div class="card card-coral">
+    <div class="card-title">Ponto de sela <span class="badge badge-coral" style="margin-left:8px">Definição 4</span></div>
+    <p>Um ponto crítico que <em>não</em> é extremo. Na vizinhança existem pontos com f maior <strong>e</strong> pontos com f menor — como uma sela de cavalo.</p>
+    <div class="formula"><span class="cmt">Exemplo clássico:</span><br>
+f(x,y) = y² − x²  →  (0,0) é ponto de sela<br><br>
+f(x,0) = −x² &lt; 0  <span class="cmt">// desce no eixo x</span><br>
+f(0,y) = y²  &gt; 0  <span class="cmt">// sobe no eixo y</span></div>
+  </div>
+
+  <!-- Discriminante -->
+  <div class="card card-amber" style="margin-top:1.5rem">
+    <div class="card-title">Discriminante / Hessiano <span class="badge badge-amber" style="margin-left:8px">Definição 5</span></div>
+    <div class="formula">D(x,y) = <span class="kw">fₓₓ</span> · <span class="kw">f_yy</span> − (<span class="kw">fₓ_y</span>)²</div>
+    <p>É o determinante da matriz Hessiana de f. Mede a "concavidade combinada" da função no ponto crítico.</p>
+  </div>
+
+  <!-- Teste da 2ª derivada -->
+  <div class="card" style="margin-top:1.5rem">
+    <div class="card-title">Teste da derivada segunda <span class="badge badge-blue" style="margin-left:8px">Teorema 2</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>D(x₀,y₀)</th><th>fₓₓ(x₀,y₀)</th><th>Conclusão</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span style="color:var(--coral)">D &lt; 0</span></td><td>—</td><td><span class="tag tag-coral">Ponto de sela</span></td></tr>
+          <tr><td><span style="color:var(--teal)">D &gt; 0</span></td><td style="color:var(--teal)">fₓₓ &gt; 0</td><td><span class="tag tag-green">Mínimo local</span></td></tr>
+          <tr><td><span style="color:var(--teal)">D &gt; 0</span></td><td style="color:var(--coral)">fₓₓ &lt; 0</td><td><span class="tag tag-purple">Máximo local</span></td></tr>
+          <tr><td><span style="color:var(--text3)">D = 0</span></td><td>—</td><td><span class="tag tag-amber">Inconclusivo</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Passo a passo -->
+  <div class="card" style="margin-top:1.5rem">
+    <div class="card-title">Passo a passo — encontrar extremos locais</div>
+    <div class="steps">
+      <div class="step"><div class="step-num blue">1</div><div class="step-body"><h3>Calcule fₓ e f_y</h3><p>Derive parcialmente em x e em y.</p></div></div>
+      <div class="step"><div class="step-num blue">2</div><div class="step-body"><h3>Resolva fₓ = 0 e f_y = 0 simultaneamente</h3><p>Encontre todos os pontos (x₀,y₀) que satisfazem o sistema.</p></div></div>
+      <div class="step"><div class="step-num blue">3</div><div class="step-body"><h3>Calcule as derivadas segundas fₓₓ, f_yy, fₓ_y</h3></div></div>
+      <div class="step"><div class="step-num blue">4</div><div class="step-body"><h3>Calcule D(x₀,y₀) = fₓₓ·f_yy − (fₓ_y)² em cada ponto crítico</h3></div></div>
+      <div class="step"><div class="step-num blue">5</div><div class="step-body"><h3>Aplique o Teorema 2</h3><p>Consulte a tabela acima para classificar.</p></div></div>
+      <div class="step"><div class="step-num blue">6</div><div class="step-body"><h3>Calcule o valor f(x₀,y₀) se for extremo</h3><p>Esse é o extremo local — o valor da função, não o ponto.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Exemplo resolvido -->
+  <div class="example" style="margin-top:1.5rem">
+    <div class="example-label">Exemplo resolvido — passo a passo</div>
+    <div class="stepper">
+      <div class="stepper-nav" id="ex1-nav">
+        <button class="s-btn active" onclick="showStep('ex1',0,this)">Função</button>
+        <button class="s-btn" onclick="showStep('ex1',1,this)">1ªs derivadas</button>
+        <button class="s-btn" onclick="showStep('ex1',2,this)">Pontos críticos</button>
+        <button class="s-btn" onclick="showStep('ex1',3,this)">2ªs derivadas</button>
+        <button class="s-btn" onclick="showStep('ex1',4,this)">Discriminante</button>
+        <button class="s-btn" onclick="showStep('ex1',5,this)">Resultado</button>
+      </div>
+
+      <div class="s-panel active" data-group="ex1">
+        <div class="card-title">Função a analisar</div>
+        <div class="formula">f(x,y) = x³ + y³ − 3xy</div>
+        <p>Queremos encontrar todos os extremos locais e pontos de sela desta função.</p>
+      </div>
+      <div class="s-panel" data-group="ex1">
+        <div class="card-title">Passo 1 — Derivadas parciais de primeira ordem</div>
+        <div class="formula"><span class="kw">fₓ</span>(x,y) = 3x² − 3y<br><span class="kw">f_y</span>(x,y) = 3y² − 3x</div>
+      </div>
+      <div class="s-panel" data-group="ex1">
+        <div class="card-title">Passo 2 — Pontos críticos (fₓ = 0 e f_y = 0)</div>
+        <div class="formula"><span class="cmt">Do sistema:</span><br>
+3x² − 3y = 0  →  y = x²  <span class="cmt">...(1)</span><br>
+3y² − 3x = 0  →  x = y²  <span class="cmt">...(2)</span><br><br>
+<span class="cmt">Substitui (1) em (2):</span><br>
+x = (x²)² = x⁴<br>
+x⁴ − x = 0<br>
+x(x³ − 1) = 0<br><br>
+<span class="val">x = 0</span>  →  y = 0  →  ponto <span class="val">(0, 0)</span><br>
+<span class="val">x = 1</span>  →  y = 1  →  ponto <span class="val">(1, 1)</span></div>
+      </div>
+      <div class="s-panel" data-group="ex1">
+        <div class="card-title">Passo 3 — Derivadas segundas</div>
+        <div class="formula"><span class="kw">fₓₓ</span>(x,y) = 6x<br>
+<span class="kw">f_yy</span>(x,y) = 6y<br>
+<span class="kw">fₓ_y</span>(x,y) = −3</div>
+      </div>
+      <div class="s-panel" data-group="ex1">
+        <div class="card-title">Passo 4 — Discriminante</div>
+        <div class="formula">D(x,y) = <span class="kw">fₓₓ</span>·<span class="kw">f_yy</span> − (<span class="kw">fₓ_y</span>)²<br>
+       = (6x)(6y) − (−3)²<br>
+       = 36xy − 9<br><br>
+<span class="cmt">Em (0, 0):</span>  D = 36·0·0 − 9 = <span style="color:var(--coral)">−9</span><br>
+<span class="cmt">Em (1, 1):</span>  D = 36·1·1 − 9 = <span style="color:var(--teal)">+27</span><br>
+              fₓₓ(1,1) = 6·1 = <span style="color:var(--teal)">+6</span></div>
+      </div>
+      <div class="s-panel" data-group="ex1">
+        <div class="card-title">Passo 5 — Classificação e resultado</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ponto</th><th>D</th><th>fₓₓ</th><th>Classificação</th><th>Valor f</th></tr></thead>
+            <tbody>
+              <tr><td>(0, 0)</td><td style="color:var(--coral)">−9 &lt; 0</td><td>—</td><td><span class="tag tag-coral">Ponto de sela</span></td><td>f(0,0) = 0</td></tr>
+              <tr><td>(1, 1)</td><td style="color:var(--teal)">+27 &gt; 0</td><td style="color:var(--teal)">+6 &gt; 0</td><td><span class="tag tag-green">Mínimo local</span></td><td>f(1,1) = <strong>−1</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box-ok"><p>✔ Mínimo local = −1, atingido no ponto (1, 1)</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SEÇÃO 2 — EXTREMOS GLOBAIS
+════════════════════════════════════ -->
+<section class="section" id="globais">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--teal-dim)">🌐</div>
+    <div>
+      <h2>Extremos globais</h2>
+      <p>Máximo e mínimo absolutos em domínios compactos</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card card-blue">
+      <div class="card-title">Mínimo global</div>
+      <div class="formula">f(x₀,y₀) ≤ f(x,y), ∀(x,y) ∈ U</div>
+      <p>O menor valor de f em todo o domínio U.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">Máximo global</div>
+      <div class="formula">f(x₀,y₀) ≥ f(x,y), ∀(x,y) ∈ U</div>
+      <p>O maior valor de f em todo o domínio U.</p>
+    </div>
+  </div>
+
+  <div class="card card-amber" style="margin-top:1rem">
+    <div class="card-title">Teorema de existência <span class="badge badge-amber" style="margin-left:8px">Teorema 1</span></div>
+    <p>Se f é <strong>contínua</strong> num conjunto <strong>compacto</strong> U (fechado e limitado), então f assume seus valores máximo e mínimo globais em U.</p>
+    <div class="box-ok"><p>✔ Compacto = fechado + limitado. Regiões triangulares, retangulares e circulares com fronteira incluída são compactas.</p></div>
+  </div>
+
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">Onde procurar os extremos</div>
+    <div class="grid2">
+      <div class="mini-card">
+        <h3>🔵 No interior</h3>
+        <p>Extremo no interior é também local → encontrar pontos críticos (fₓ = f_y = 0) e checar se pertencem ao interior (não à fronteira).</p>
+      </div>
+      <div class="mini-card">
+        <h3>🟠 Na fronteira</h3>
+        <p>Parametrizar cada trecho como g(t) = f restrita ao lado/curva. Procurar g'(t) = 0 no intervalo aberto do trecho.</p>
+      </div>
+    </div>
+    <div class="box-danger" style="margin-top:0.75rem">
+      <p>⚠️ Extremos na fronteira <strong>não</strong> são locais de f. Não aplique o Teste da Derivada Segunda neles.</p>
+    </div>
+    <div class="box-warn">
+      <p>⚠️ Não esqueça de avaliar f nos <strong>vértices</strong> — eles não aparecem nos trechos abertos da fronteira.</p>
+    </div>
+  </div>
+
+  <!-- Passo a passo globais -->
+  <div class="card" style="margin-top:1.5rem">
+    <div class="card-title">Passo a passo — extremos globais em domínio compacto</div>
+    <div class="steps">
+      <div class="step"><div class="step-num teal">1</div><div class="step-body"><h3>Desenhe e identifique a região R</h3><p>Marque vértices, equações dos lados e o interior.</p></div></div>
+      <div class="step"><div class="step-num teal">2</div><div class="step-body"><h3>Interior: resolva fₓ = 0 e f_y = 0</h3><p>Verifique se cada ponto crítico pertence ao interior (não à fronteira).</p></div></div>
+      <div class="step"><div class="step-num teal">3</div><div class="step-body"><h3>Fronteira: parametrize cada trecho</h3><p>Substitua a equação do trecho em f(x,y) → função g(t) de uma variável. Resolva g'(t) = 0 no intervalo aberto do trecho.</p></div></div>
+      <div class="step"><div class="step-num teal">4</div><div class="step-body"><h3>Avalie f em todos os vértices</h3></div></div>
+      <div class="step"><div class="step-num teal">5</div><div class="step-body"><h3>Compare todos os valores candidatos</h3><p>O maior é o máximo global; o menor é o mínimo global.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Exemplo globais -->
+  <div class="example" style="margin-top:1.5rem">
+    <div class="example-label">Exemplo — região triangular</div>
+    <div class="formula">f(x,y) = x³ − y³ + 3xy + 3<br>
+<span class="cmt">Vértices: A(1,2), B(1,−2), C(−1,−2)</span></div>
+
+    <div class="stepper">
+      <div class="stepper-nav">
+        <button class="s-btn active" onclick="showStep('ex2',0,this)">Interior</button>
+        <button class="s-btn" onclick="showStep('ex2',1,this)">Lado AB</button>
+        <button class="s-btn" onclick="showStep('ex2',2,this)">Lado BC</button>
+        <button class="s-btn" onclick="showStep('ex2',3,this)">Lado AC</button>
+        <button class="s-btn" onclick="showStep('ex2',4,this)">Resultado</button>
+      </div>
+
+      <div class="s-panel active" data-group="ex2">
+        <div class="card-title">Interior</div>
+        <div class="formula"><span class="kw">fₓ</span> = 3x² + 3y = 0  →  y = −x²<br>
+<span class="kw">f_y</span> = −3y² + 3x = 0  →  x = y²<br><br>
+<span class="cmt">Substituindo:</span> x = (−x²)² = x⁴<br>
+x⁴ − x = 0 → x = 0 ou x = 1<br><br>
+(0,0): não pertence ao interior<br>
+(1,−1): não pertence ao interior<br><br>
+<span style="color:var(--amber)">→ Nenhum candidato no interior</span></div>
+      </div>
+      <div class="s-panel" data-group="ex2">
+        <div class="card-title">Lado AB — x = 1, y ∈ ]−2, 2[</div>
+        <div class="formula">g(y) = f(1,y) = 1 − y³ + 3y + 3 = −y³ + 3y + 4<br><br>
+g'(y) = −3y² + 3 = 0  →  y = ±1<br><br>
+<span class="val">g(1) = f(1,1) = −1+3+4 = 6</span><br>
+<span class="val">g(−1) = f(1,−1) = 1−3+4 = 2</span></div>
+      </div>
+      <div class="s-panel" data-group="ex2">
+        <div class="card-title">Lado BC — y = −2, x ∈ ]−1, 1[</div>
+        <div class="formula">h(x) = f(x,−2) = x³ + 8 − 6x + 3 = x³ − 6x + 11<br><br>
+h'(x) = 3x² − 6 = 0  →  x = ±√2 ≈ ±1.41<br><br>
+<span style="color:var(--text3)">Ambos fora do intervalo ]−1,1[ → descartados</span></div>
+      </div>
+      <div class="s-panel" data-group="ex2">
+        <div class="card-title">Lado AC — y = 2x, x ∈ ]−1, 1[</div>
+        <div class="formula">p(x) = f(x,2x) = x³ − 8x³ + 6x² + 3 = −7x³ + 6x² + 3<br><br>
+p'(x) = −21x² + 12x = 0<br>
+x(−21x + 12) = 0<br>
+x = 0  ou  x = 4/7 → y = 8/7<br><br>
+<span class="val">p(0) = f(0,0) = 3</span><br>
+<span class="val">p(4/7) = f(4/7, 8/7) ≈ 3.65</span></div>
+      </div>
+      <div class="s-panel" data-group="ex2">
+        <div class="card-title">Resultado final — todos os candidatos</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ponto</th><th>Origem</th><th>f(ponto)</th></tr></thead>
+            <tbody>
+              <tr><td>(1, 1)</td><td>Lado AB</td><td>6</td></tr>
+              <tr><td>(1, −1)</td><td>Lado AB</td><td>2</td></tr>
+              <tr><td>(0, 0)</td><td>Lado AC</td><td>3</td></tr>
+              <tr><td>(4/7, 8/7)</td><td>Lado AC</td><td>≈ 3.65</td></tr>
+              <tr><td>A(1, 2)</td><td>Vértice</td><td>f = 2</td></tr>
+              <tr><td>B(1, −2)</td><td>Vértice</td><td>f = 6</td></tr>
+              <tr><td style="color:var(--coral)">C(−1, −2)</td><td>Vértice</td><td style="color:var(--coral);font-weight:700">f = 16 ← Máximo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid2" style="margin-top:0.75rem">
+          <div class="box-ok"><p>✔ Mínimo global = 2</p></div>
+          <div class="box-ok"><p>✔ Máximo global = 16</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SEÇÃO 3 — MULTIPLICADORES DE LAGRANGE
+════════════════════════════════════ -->
+<section class="section" id="lagrange">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--purple-dim)">λ</div>
+    <div>
+      <h2>Multiplicadores de Lagrange</h2>
+      <p>Otimização com vínculos (restrições)</p>
+    </div>
+  </div>
+
+  <div class="card card-purple">
+    <div class="card-title">Ideia central</div>
+    <p>Queremos o extremo de f(x,y) restrito ao vínculo g(x,y) = 0. No ponto de extremo, ∇f e ∇g são paralelos:</p>
+    <div class="formula">∇f(x₀,y₀) = <span class="val">λ</span> · ∇g(x₀,y₀)</div>
+    <p>O escalar <strong>λ</strong> é o multiplicador de Lagrange.</p>
+    <div class="box-ok"><p>✔ Geometricamente: curvas de nível de f e a curva g=0 são tangentes no ponto de extremo vinculado.</p></div>
+  </div>
+
+  <!-- 1 Vínculo -->
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">Passo a passo — 1 vínculo, 2 variáveis</div>
+    <div class="steps">
+      <div class="step"><div class="step-num purple">1</div><div class="step-body"><h3>Reescreva o vínculo como g(x,y) = 0</h3><p>Ex.: x² + y² = 1 → g(x,y) = x² + y² − 1</p></div></div>
+      <div class="step"><div class="step-num purple">2</div><div class="step-body"><h3>Monte o sistema ∇f = λ∇g junto com g = 0</h3>
+        <div class="formula" style="font-size:12px"><span class="kw">fₓ</span> = λ·<span class="kw">gₓ</span>  <span class="cmt">...(1)</span><br>
+<span class="kw">f_y</span> = λ·<span class="kw">g_y</span>  <span class="cmt">...(2)</span><br>
+<span class="kw">g</span>(x,y) = 0   <span class="cmt">...(3)</span></div>
+      </div></div>
+      <div class="step"><div class="step-num purple">3</div><div class="step-body"><h3>Elimine λ dividindo (1) por (2)</h3><p>Válido se λ ≠ 0 e os denominadores ≠ 0. Isso gera uma relação entre x e y.</p></div></div>
+      <div class="step"><div class="step-num purple">4</div><div class="step-body"><h3>Substitua a relação em (3) para encontrar x e y</h3></div></div>
+      <div class="step"><div class="step-num purple">5</div><div class="step-body"><h3>Verifique casos especiais</h3><p>Teste λ = 0 e os casos em que denominadores se anulam. Substitua em (3) — se não satisfaz o vínculo, descarte.</p></div></div>
+      <div class="step"><div class="step-num purple">6</div><div class="step-body"><h3>Compare f em todos os candidatos</h3><p>O maior é máximo vinculado; o menor é mínimo vinculado.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 2 Vínculos -->
+  <div class="card card-amber" style="margin-top:1rem">
+    <div class="card-title">Dois vínculos — 3 variáveis</div>
+    <p>Para f(x,y,z) com g(x,y,z) = 0 e h(x,y,z) = 0:</p>
+    <div class="formula">∇f = <span class="val">λ</span>·∇g + <span class="val">μ</span>·∇h</div>
+    <p>Sistema: 3 equações do gradiente + 2 vínculos = 5 equações para x, y, z, λ, μ.</p>
+    <div class="box-warn"><p>⚠️ Procure substituições diretas. Ex.: se uma equação do gradiente isola μ imediatamente, use isso primeiro.</p></div>
+  </div>
+
+  <!-- Exemplo Lagrange -->
+  <div class="example" style="margin-top:1.5rem">
+    <div class="example-label">Exemplo resolvido — 1 vínculo</div>
+    <div class="formula">f(x,y) = x² + 4y² − x + 2y &nbsp; sujeito a &nbsp; x² + 4y² = 1</div>
+
+    <div class="stepper">
+      <div class="stepper-nav">
+        <button class="s-btn active" onclick="showStep('ex3',0,this)">Sistema</button>
+        <button class="s-btn" onclick="showStep('ex3',1,this)">Eliminar λ</button>
+        <button class="s-btn" onclick="showStep('ex3',2,this)">Vínculo</button>
+        <button class="s-btn" onclick="showStep('ex3',3,this)">Resultado</button>
+      </div>
+      <div class="s-panel active" data-group="ex3">
+        <div class="card-title">Montando o sistema</div>
+        <div class="formula">g(x,y) = x² + 4y² − 1<br><br>
+∇f = (2x−1, 8y+2)<br>
+∇g = (2x,  8y)<br><br>
+<span class="kw">2x−1 = 2λx</span>  <span class="cmt">...(1)</span><br>
+<span class="kw">8y+2 = 8λy</span>  <span class="cmt">...(2)</span><br>
+<span class="kw">x² + 4y² = 1</span> <span class="cmt">...(3)</span></div>
+      </div>
+      <div class="s-panel" data-group="ex3">
+        <div class="card-title">Eliminando λ — dividir (1)÷(2)</div>
+        <div class="formula">(2x−1)/(8y+2) = (2λx)/(8λy) = x/(4y)<br><br>
+<span class="cmt">Cruzando:</span><br>
+4y(2x−1) = x(8y+2)<br>
+8xy − 4y = 8xy + 2x<br>
+−4y = 2x<br><br>
+<span class="val">x = −2y</span></div>
+      </div>
+      <div class="s-panel" data-group="ex3">
+        <div class="card-title">Substituindo x = −2y em (3)</div>
+        <div class="formula">(−2y)² + 4y² = 1<br>
+4y² + 4y² = 1<br>
+8y² = 1<br>
+y = ±1/(2√2)<br><br>
+<span class="val">y = 1/(2√2)</span>  →  x = −1/√2  →  ponto (−1/√2, 1/(2√2))<br>
+<span class="val">y = −1/(2√2)</span> →  x = 1/√2   →  ponto (1/√2, −1/(2√2))<br><br>
+<span class="cmt">Caso λ = 0: leva a (1/2, −1/4), não satisfaz (3) → descartado</span><br>
+<span class="cmt">Caso y = 0: contradição em (2) → descartado</span></div>
+      </div>
+      <div class="s-panel" data-group="ex3">
+        <div class="card-title">Resultado final</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ponto</th><th>f(ponto)</th><th>Classificação</th></tr></thead>
+            <tbody>
+              <tr><td>(−1/√2, 1/(2√2))</td><td>1 + √2 ≈ <strong>2,41</strong></td><td><span class="tag tag-purple">Máximo vinculado</span></td></tr>
+              <tr><td>(1/√2, −1/(2√2))</td><td>1 − √2 ≈ <strong>−0,41</strong></td><td><span class="tag tag-green">Mínimo vinculado</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box-ok"><p>✔ f assume máximo = 1+√2 e mínimo = 1−√2 sobre a elipse x²+4y²=1</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SEÇÃO 4 — RESUMO RÁPIDO
+════════════════════════════════════ -->
+<section class="section" id="resumo">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--amber-dim)">⚡</div>
+    <div>
+      <h2>Resumo rápido</h2>
+      <p>Tudo num só lugar antes da prova</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="mini-card" style="border-top:2px solid var(--blue)">
+      <h3>Extremo local</h3>
+      <p>① Achar pontos críticos<br>② Calcular D = fₓₓ·f_yy − (fₓ_y)²<br>③ Classificar: D&lt;0=sela, D&gt;0+fₓₓ&gt;0=mín, D&gt;0+fₓₓ&lt;0=máx</p>
+    </div>
+    <div class="mini-card" style="border-top:2px solid var(--teal)">
+      <h3>Extremo global</h3>
+      <p>① Interior: pontos críticos<br>② Fronteira: parametrizar g(t)<br>③ Avaliar vértices<br>④ Comparar tudo</p>
+    </div>
+    <div class="mini-card" style="border-top:2px solid var(--purple)">
+      <h3>Lagrange</h3>
+      <p>① ∇f = λ∇g (+ μ∇h se 2 vínculos)<br>② Eliminar λ dividindo equações<br>③ Substituir no vínculo<br>④ Comparar f nos candidatos</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem">
+    <div class="card-title">Armadilhas comuns na prova</div>
+    <ul class="list">
+      <li>Confundir o <strong>extremo</strong> (valor f) com o <strong>ponto</strong> (x₀,y₀) onde ocorre.</li>
+      <li>Aplicar o Teste da 2ª Derivada em pontos da <strong>fronteira</strong> (só vale no interior).</li>
+      <li>Esquecer de avaliar f nos <strong>vértices</strong> ao buscar extremos globais.</li>
+      <li>Dividir por zero ao eliminar λ sem verificar o <strong>caso λ = 0</strong> separadamente.</li>
+      <li>D &gt; 0 não basta — precisa verificar o <strong>sinal de fₓₓ</strong> para saber se é máximo ou mínimo.</li>
+      <li>D = 0 → teste <strong>inconclusivo</strong>. Não classifique como nada!</li>
+      <li>Em Lagrange: candidatos que não satisfazem o vínculo (3) devem ser <strong>descartados</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="card card-blue" style="margin-top:1rem">
+    <div class="card-title">Fórmulas para colar na cabeça</div>
+    <div class="formula"><span class="cmt">Discriminante:</span><br>
+D(x,y) = <span class="kw">fₓₓ</span> · <span class="kw">f_yy</span> − (<span class="kw">fₓ_y</span>)²<br><br>
+<span class="cmt">Lagrange — 1 vínculo:</span><br>
+∇f = <span class="val">λ</span> · ∇g<br><br>
+<span class="cmt">Lagrange — 2 vínculos:</span><br>
+∇f = <span class="val">λ</span> · ∇g + <span class="val">μ</span> · ∇h<br><br>
+<span class="cmt">Plano tangente em ponto crítico (com derivadas existindo):</span><br>
+z = f(x₀,y₀) &nbsp; <span class="cmt">← horizontal</span></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SEÇÃO 5 — QUIZ
+════════════════════════════════════ -->
+<section class="section" id="quiz">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--amber-dim)">🧪</div>
+    <div>
+      <h2>Quiz interativo</h2>
+      <p>Teste seus conhecimentos antes da prova</p>
+    </div>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <div class="quiz-progress" id="quiz-prog"></div>
+    <div id="quiz-container"></div>
+    <div class="quiz-score" id="quiz-score"></div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Cálculo Diferencial e Integral III · IFPB · Prof. Juarez Farias Aires
+</footer>
+
+<script>
+/* ── NAV SCROLL ── */
+function scrollTo(hash) {
+  document.querySelector(hash).scrollIntoView({ behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', () => {
+  const sections = ['locais','globais','lagrange','quiz'];
+  const links = document.querySelectorAll('.nav-link');
+  let active = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) active = i;
+  });
+  links.forEach((l, i) => l.classList.toggle('active', i === active));
+});
+
+/* ── STEPPER ── */
+function showStep(group, idx, btn) {
+  const panels = document.querySelectorAll(`[data-group="${group}"]`);
+  panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+  btn.closest('.stepper').querySelectorAll('.s-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+/* ── QUIZ ── */
+const questions = [
+  {
+    q: "Se D(x₀,y₀) < 0, o ponto crítico é:",
+    opts: ["Mínimo local", "Máximo local", "Ponto de sela", "Inconclusivo"],
+    ans: 2,
+    exp: "D < 0 indica que a superfície tem curvaturas opostas nas direções principais — a função sobe num sentido e desce no outro: ponto de sela."
+  },
+  {
+    q: "D(x₀,y₀) > 0 e fₓₓ(x₀,y₀) < 0. O ponto é:",
+    opts: ["Mínimo local", "Máximo local", "Ponto de sela", "Inconclusivo"],
+    ans: 1,
+    exp: "D > 0 garante extremo local. fₓₓ < 0 indica concavidade para baixo → máximo local."
+  },
+  {
+    q: "Ao buscar extremos globais numa região compacta, onde TAMBÉM se deve procurar?",
+    opts: ["Apenas nos pontos críticos do interior", "Apenas na fronteira", "Interior, fronteira e vértices", "Somente nos vértices"],
+    ans: 2,
+    exp: "Deve-se checar: pontos críticos no interior, pontos com g'=0 em cada trecho da fronteira, E os vértices (que não aparecem nos trechos abertos)."
+  },
+  {
+    q: "Na condição de Lagrange ∇f = λ∇g, o que representa λ?",
+    opts: ["Um ponto crítico de f", "O valor do extremo", "O multiplicador de Lagrange — um escalar que equaciona os gradientes", "O vínculo g(x,y)"],
+    ans: 2,
+    exp: "λ é o multiplicador de Lagrange. Ele existe porque ∇f e ∇g são paralelos no ponto de extremo vinculado, então um é múltiplo escalar do outro."
+  },
+  {
+    q: "f(x,y) = x² − y². Qual é a classificação de (0,0)?",
+    opts: ["Mínimo local", "Máximo local", "Ponto de sela", "Inconclusivo"],
+    ans: 2,
+    exp: "fₓₓ=2, f_yy=−2, fₓ_y=0. D = (2)(−2)−0 = −4 < 0 → ponto de sela. De fato, f(x,0)=x² > 0 e f(0,y)=−y² < 0."
+  },
+  {
+    q: "O extremo local é:",
+    opts: [
+      "O ponto (x₀,y₀) onde ocorre",
+      "O valor f(x₀,y₀)",
+      "O ponto do gráfico (x₀,y₀,f(x₀,y₀))",
+      "O ponto crítico"
+    ],
+    ans: 1,
+    exp: "O extremo local é o valor f(x₀,y₀). O ponto (x₀,y₀) é onde ele ocorre, e (x₀,y₀,f(x₀,y₀)) é o ponto do gráfico."
+  },
+  {
+    q: "Para f contínua em domínio compacto, o Teorema de Existência garante que:",
+    opts: [
+      "Os extremos globais ocorrem apenas nos pontos críticos",
+      "Não existe máximo ou mínimo",
+      "f assume seus valores máximo e mínimo globais",
+      "Os extremos globais coincidem com os locais"
+    ],
+    ans: 2,
+    exp: "O Teorema 1 garante que f contínua em conjunto compacto (fechado e limitado) assume máximo e mínimo globais em algum ponto desse conjunto."
+  },
+  {
+    q: "Em Lagrange com 2 vínculos g=0 e h=0, a condição é:",
+    opts: [
+      "∇f = λ∇g",
+      "∇f = λ∇g + μ∇h",
+      "∇f = λ(∇g · ∇h)",
+      "∇f = 0"
+    ],
+    ans: 1,
+    exp: "Com dois vínculos, ∇f deve estar no plano gerado por ∇g e ∇h, logo é combinação linear: ∇f = λ∇g + μ∇h."
+  }
+];
+
+let qIdx = 0, score = 0, answered = [];
+
+function buildQuiz() {
+  const prog = document.getElementById('quiz-prog');
+  prog.innerHTML = questions.map((_, i) => `<div class="q-dot" id="qd${i}"></div>`).join('');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (qIdx >= questions.length) { showScore(); return; }
+  const q = questions[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="quiz-q">Pergunta ${qIdx+1} de ${questions.length}<br><br>${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answer(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnxt" onclick="nextQ()">Próxima →</button>
+  `;
+}
+
+function answer(i) {
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.classList.add('disabled'));
+  opts[i].classList.add(i === q.ans ? 'correct' : 'wrong');
+  if (i !== q.ans) opts[q.ans].classList.add('correct');
+  const fb = document.getElementById('qfb');
+  fb.style.display = 'block';
+  const correct = i === q.ans;
+  if (correct) score++;
+  fb.style.color = correct ? 'var(--teal)' : 'var(--coral)';
+  fb.innerHTML = (correct ? '✔ Correto! ' : '✗ Incorreto. ') + q.exp;
+  document.getElementById('qnxt').style.display = 'inline-block';
+  const dot = document.getElementById(`qd${qIdx}`);
+  dot.classList.add('done', correct ? 'correct' : 'wrong');
+  answered.push(correct);
+}
+
+function nextQ() { qIdx++; renderQuestion(); }
+
+function showScore() {
+  document.getElementById('quiz-container').style.display = 'none';
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  const pct = Math.round(score/questions.length*100);
+  const msg = pct === 100 ? '🏆 Perfeito! Prova na mão!' : pct >= 75 ? '🎯 Muito bem! Ainda dá pra revisar alguns pontos.' : pct >= 50 ? '📚 Razoável — reveja as seções que errou.' : '💪 Revise o material e tente novamente!';
+  sc.innerHTML = `
+    <div style="font-size:48px;margin-bottom:1rem">${pct >= 75 ? '🎓' : '📖'}</div>
+    <div style="font-size:32px;font-weight:600;color:${pct>=75?'var(--teal)':'var(--amber)'}">${score}/${questions.length}</div>
+    <div style="font-size:14px;color:var(--text2);margin-top:0.5rem">${msg}</div>
+    <button onclick="restartQuiz()" style="margin-top:1.5rem;padding:10px 24px;border-radius:8px;border:1px solid var(--blue);background:var(--blue-dim);color:var(--blue);font-size:14px;cursor:pointer;font-family:var(--font)">Tentar novamente</button>
+  `;
+}
+
+function restartQuiz() {
+  qIdx = 0; score = 0; answered = [];
+  document.getElementById('quiz-container').style.display = 'block';
+  document.getElementById('quiz-score').style.display = 'none';
+  buildQuiz();
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
